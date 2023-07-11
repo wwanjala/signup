@@ -30,6 +30,11 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     select: false,
   },
+  active: {
+    type: Boolean,
+    default: true,
+    select: false,
+  },
   passwordConfirm: {
     type: String,
     required: [true, 'Please confirm your password'],
@@ -49,6 +54,11 @@ userSchema.pre('save', async function (next) {
 
   // Delete passwordConfirm field
   this.passwordConfirm = undefined;
+  next();
+});
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } });
   next();
 });
 
